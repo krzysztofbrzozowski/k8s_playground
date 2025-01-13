@@ -1,3 +1,4 @@
+# Based on kind of object you have to select correct api. apiVersion v1 -> Pod, Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,8 +6,12 @@ metadata:
 spec:
   type: NodePort
   ports:
+      # If you want to connect from inside of the cluster this will be the port to talk to, e.g. can be translated to targetPort
     - port: 3050
+      # Port to connect to Pod
       targetPort: 3000
+      # Outside word port
       nodePort: 31515
+  # Based on client-pod label it recognized to connect to that pod on port 3000
   selector:
     component: web

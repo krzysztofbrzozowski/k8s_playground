@@ -1,9 +1,14 @@
+# Based on kind of object you have to select correct api
 apiVersion: v1
 kind: Pod
+# Just a name with label (label is used in e.g. service)
 metadata:
   name: client-pod
   labels:
     component: web
+# Container it runs, k8s can not build container itself, it has to be hosted in docker hub or you can create own
+# docker registry and do some tweaks to make it run
+# This pod runs on port 3000
 spec:
   containers:
     - name: client
