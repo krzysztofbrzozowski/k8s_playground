@@ -49,5 +49,18 @@ Apply deployment (the same command as pod)
 ```
 kubectl apply -f sample_config_1/client-deployment.yaml
 ```
+Get pods/deployments status
+```
+kubectl get pods
+kubectl get pods -o wide
+
+kubectl get deployments
+
+kubectl describe pods
+kubectl describe deployments
+```
 
 App is running on the same **localhost:31515**
+
+Note:
+In Deployment object it is possible to change e.g. port. In Pod it is not allowed.
