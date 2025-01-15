@@ -64,3 +64,17 @@ App is running on the same **localhost:31515**
 
 Note:
 In Deployment object it is possible to change e.g. port. In Pod it is not allowed.
+
+> [!IMPORTANT]
+> In this section has been updated image of the pod
+> ```
+> kubectl set image <object-type>/<object-name> <container-name>=<new-image-to-use>
+> kubectl set image deployment/client-deployment client=stephengrider/multi-client:v5
+>
+> kubectl get pods <- to see if pod is refreshed
+
+> [!IMPORTANT]
+> Pushing of the docker file to some registry can be done
+> ```
+> docker build -t <user>/<docker-image>:<tag>
+> docker push <user>/<docker-image>:<tag>
