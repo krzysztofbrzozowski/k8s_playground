@@ -2,6 +2,7 @@
 - [To run locally the k8s](#to-run-locally-the-k8s)
 - [sample_config_0](#sample_config_0) <- some very very basic config
 - [sample_config_1](#sample_config_1) <- config contains Deployment object
+- [sample_config_2](#sample_config_2) <- config contains full app with ClousterIP and Deployments
 
 
 ## To run locally the k8s
@@ -20,7 +21,7 @@ CoreDNS is running at https://127.0.0.1:6443/api/v1/namespaces/kube-system/servi
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'
 ```
 
-## sample_config_0
+## ↪ sample_config_0
 Contains sample config with app to run simple react app. App contains 2 objects: **pod** and **service**
 Run it using
 ```
@@ -35,7 +36,7 @@ kubectl get services
 ```
 ![sample_config_0](https://krzysztofbrzozowski.com/media/2025/01/13/running_app.png)
 
-## sample_config_1
+## ↪ sample_config_1
 This is modified sample_0, pod object has been changed to deploy object. Deployment is some kind of object which can tell to master to
 create new pod. Later on deployment node will take handle of that pod. Basically Deployment is 'bucket' for pods.
 
@@ -66,7 +67,7 @@ Note:
 In Deployment object it is possible to change e.g. port. In Pod it is not allowed.
 
 > [!IMPORTANT]
-> In this section has been updated image of the pod
+> In this section has been updated image of the pod AFTERWARDS
 > ```
 > kubectl set image <object-type>/<object-name> <container-name>=<new-image-to-use>
 > kubectl set image deployment/client-deployment client=stephengrider/multi-client:v5
@@ -78,3 +79,48 @@ In Deployment object it is possible to change e.g. port. In Pod it is not allowe
 > ```
 > docker build -t <user>/<docker-image>:<tag>
 > docker push <user>/<docker-image>:<tag>
+
+## ↪ sample_config_2
+This is full kubernetes stuctructure app
+![k8s_atch](https://krzysztofbrzozowski.com/media/2025/01/17/kubernetes-arch.jpeg)
+
+To run this deployment you need to remove previous Deployment and Servce
+Delete deployment and service
+```
+kubectl delete deployment client-deployment
+kubectl delete service client-node-port
+```
+Apply config from all the folder
+```
+kubectl apply -f <folder>
+kubectl apply -f sample_config_2
+```
+> [!IMPORTANT]
+> Some of the config has the error afer deployment
+> ```
+> client-deployment     3/3     3            3           102s
+> postgres-deployment   0/1     1            0           102s
+> redis-deployment      1/1     1            1           102s
+> server-deployment     3/3     3            3           102s
+> worker-deployment     1/1     1            1           102s
+>
+> client-deployment-54c49db587-jxkdw     1/1     Running   0              4m
+> client-deployment-54c49db587-qxn5x     1/1     Running   0              4m
+> client-deployment-54c49db587-v2lv2     1/1     Running   0              4m
+> postgres-deployment-6dcb4dcbb4-k5x2p   0/1     Error     5 (101s ago)   4m
+> redis-deployment-5cbb49bb65-xpssr      1/1     Running   0              4m
+> server-deployment-85dc8866bd-k9cs8     1/1     Running   0              4m
+> server-deployment-85dc8866bd-vwhmr     1/1     Running   0              4m
+> server-deployment-85dc8866bd-x5zs4     1/1     Running   0              4m
+> worker-deployment-6f7777d94f-vlkkf     1/1     Running   0              4m
+
+See the logs
+```
+kubectl logs <object-id_or_object_name>
+kubectl logs postgres-deployment-6dcb4dcbb4-k5x2p
+```
+```
+-> Error: Database is uninitialized and superuser password is not specified.
+       You must specify POSTGRES_PASSWORD to a non-empty value for the
+       superuser. For example, "-e POSTGRES_PASSWORD=password" on "docker run".
+```
