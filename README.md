@@ -1,8 +1,8 @@
 # Contents:
 - [To run locally the k8s](#to-run-locally-the-k8s)
-- [sample_config_0](#sample_config_0) <- some very very basic config
-- [sample_config_1](#sample_config_1) <- config contains Deployment object
-- [sample_config_2](#sample_config_2) <- config contains full app with ClousterIP and Deployments
+- [sample_config_0](#↪-sample_config_0) <- some very very basic config
+- [sample_config_1](#↪-sample_config_1) <- config contains Deployment object
+- [sample_config_2](#↪-sample_config_2) <- config contains full app with ClousterIP and Deployments
 
 
 ## To run locally the k8s
@@ -83,6 +83,16 @@ In Deployment object it is possible to change e.g. port. In Pod it is not allowe
 ## ↪ sample_config_2
 This is full kubernetes stuctructure app
 ![k8s_atch](https://krzysztofbrzozowski.com/media/2025/01/17/kubernetes-arch.jpeg)
+Here 2 new objects has been introduced:
+* **ClusterIP**: CluserIP is somehow different than NodePort in that way it **does not allow** traffic oudside of cluster
+* **PersistentVolumeClaim**: This is the volume adevrismet which might be connected to the pod/pods. It does not have fixed voliume yet but will crete on the run (as far as I understood now). We have few access modes:
+  - ```
+    ...
+    accessModes:
+    - ReadWriteOnce -> can be used by single node
+    - ReadOnlyMany -> multiple nodes can read this volume
+    - ReadWriteMany -> multiple nodes can read and write this volume
+   ```
 
 To run this deployment you need to remove previous Deployment and Servce
 Delete deployment and service
