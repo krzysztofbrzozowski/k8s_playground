@@ -141,3 +141,25 @@ kubectl describe storageclass
 kubectl get pv       <- persitent volumes status
 kubectl get pvc      <- persitent volume claims status
 ```
+
+### Secrets
+To deploy secrets it might be beneficiat to use imperative command instead of config with writtent passwords for that.
+In that case we will have to run this commands locally and in prod as well
+```
+kubectl create secret generic <secret_name> --from-literal key=value
+kubectl create secret generic pgpassword --from-literal POSTGRES_PASSWORD=12345
+```
+Get secrets
+```
+kubectl get secrets
+kubectl get secret pgpassword -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode
+```
+
+Edit secrets
+```
+kubectl edit secret pgpassword
+
+or delete and add new one
+kubectl delete secret pgpassword
+kubectl create secret generic pgpassword --from-literal=POSTGRES_PASSWORD=12345
+```

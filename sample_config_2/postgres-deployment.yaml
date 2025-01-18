@@ -31,3 +31,9 @@ spec:
               # Any data inside the container that is stored in mountPath will be sotred 
               # in 'postgres' folder inside of the persistentVolumeClaim
               subPath: postgres
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: POSTGRES_PASSWORD
