@@ -86,12 +86,18 @@ This is full kubernetes stuctructure app
 ### Here 2 new objects has been introduced:
 * **ClusterIP**: CluserIP is somehow different than NodePort in that way it **does not allow** traffic oudside of cluster
 * **PersistentVolumeClaim**: This is the volume adevrismet which might be connected to the pod/pods. It does not have fixed voliume yet but will crete on the run (as far as I understood now). We have few access modes.
-   ```
-    ...
-    accessModes:
-    - ReadWriteOnce -> can be used by single node
-    - ReadOnlyMany -> multiple nodes can read this volume
-    - ReadWriteMany -> multiple nodes can read and write this volume
+  ```
+  ...
+  accessModes:
+  - ReadWriteOnce -> can be used by single node
+  - ReadOnlyMany -> multiple nodes can read this volume
+  - ReadWriteMany -> multiple nodes can read and write this volume
+  ```
+* **Secrets** Pseudo securely stores the scecrets (as for now I am thinking), because anybody can get the sectet using
+  ```
+  kubectl get secret pgpassword -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode
+  ```
+  There must be some better way to secure that
 
 ### To run this deployment you need to remove previous Deployment and Servce
 Delete deployment and service
