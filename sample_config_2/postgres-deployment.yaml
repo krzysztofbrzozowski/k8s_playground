@@ -12,8 +12,22 @@ spec:
       labels:
         component: postgres
     spec:
+      volumes:
+        - name: postgres-sorage
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim
       containers:
         - name: postgres
           image: postgres
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "1"
           ports:
             - containerPort: 5432
+          volumeMounts:
+            - name: postgres-sorage
+              mountPath: /var/lib/postgresql/data
+              # Any data inside the container that is stored in mountPath will be sotred 
+              # in 'postgres' folder inside of the persistentVolumeClaim
+              subPath: postgres

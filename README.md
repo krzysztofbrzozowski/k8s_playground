@@ -83,18 +83,17 @@ In Deployment object it is possible to change e.g. port. In Pod it is not allowe
 ## ↪ sample_config_2
 This is full kubernetes stuctructure app
 ![k8s_atch](https://krzysztofbrzozowski.com/media/2025/01/17/kubernetes-arch.jpeg)
-Here 2 new objects has been introduced:
+### Here 2 new objects has been introduced:
 * **ClusterIP**: CluserIP is somehow different than NodePort in that way it **does not allow** traffic oudside of cluster
-* **PersistentVolumeClaim**: This is the volume adevrismet which might be connected to the pod/pods. It does not have fixed voliume yet but will crete on the run (as far as I understood now). We have few access modes:
-  - ```
+* **PersistentVolumeClaim**: This is the volume adevrismet which might be connected to the pod/pods. It does not have fixed voliume yet but will crete on the run (as far as I understood now). We have few access modes.
+   ```
     ...
     accessModes:
     - ReadWriteOnce -> can be used by single node
     - ReadOnlyMany -> multiple nodes can read this volume
     - ReadWriteMany -> multiple nodes can read and write this volume
-   ```
 
-To run this deployment you need to remove previous Deployment and Servce
+### To run this deployment you need to remove previous Deployment and Servce
 Delete deployment and service
 ```
 kubectl delete deployment client-deployment
@@ -124,7 +123,7 @@ kubectl apply -f sample_config_2
 > server-deployment-85dc8866bd-x5zs4     1/1     Running   0              4m
 > worker-deployment-6f7777d94f-vlkkf     1/1     Running   0              4m
 
-See the logs
+### See the logs
 ```
 kubectl logs <object-id_or_object_name>
 kubectl logs postgres-deployment-6dcb4dcbb4-k5x2p
@@ -133,4 +132,12 @@ kubectl logs postgres-deployment-6dcb4dcbb4-k5x2p
 -> Error: Database is uninitialized and superuser password is not specified.
        You must specify POSTGRES_PASSWORD to a non-empty value for the
        superuser. For example, "-e POSTGRES_PASSWORD=password" on "docker run".
+```
+
+### See storage
+```
+kubectl get storageclass
+kubectl describe storageclass
+kubectl get pv       <- persitent volumes status
+kubectl get pvc      <- persitent volume claims status
 ```
