@@ -83,7 +83,7 @@ In Deployment object it is possible to change e.g. port. In Pod it is not allowe
 ## ↪ sample_config_2
 This is full kubernetes stuctructure app
 ![k8s_atch](https://krzysztofbrzozowski.com/media/2025/01/17/kubernetes-arch.jpeg)
-### Here 2 new objects has been introduced:
+### Here 4 new objects has been introduced:
 * **ClusterIP**: CluserIP is somehow different than NodePort in that way it **does not allow** traffic oudside of cluster
 * **PersistentVolumeClaim**: This is the volume adevrismet which might be connected to the pod/pods. It does not have fixed voliume yet but will crete on the run (as far as I understood now). We have few access modes.
   ```
@@ -98,6 +98,8 @@ This is full kubernetes stuctructure app
   kubectl get secret pgpassword -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode
   ```
   There must be some better way to secure that
+* **Ingress NGINX** Reverse proxy but for kubernetes, looks promissing especailly
+  with acme companion, will see in the future during custom setup 
 
 ### To run this deployment you need to remove previous Deployment and Servce
 Delete deployment and service
@@ -168,4 +170,12 @@ kubectl edit secret pgpassword
 or delete and add new one
 kubectl delete secret pgpassword
 kubectl create secret generic pgpassword --from-literal=POSTGRES_PASSWORD=12345
+```
+
+### NGINX Ingress
+https://kubernetes.github.io/ingress-nginx/deploy/#quick-start
+
+Follow the guide and install the ingress controller without Helm
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.0/deploy/static/provider/cloud/deploy.yaml
 ```

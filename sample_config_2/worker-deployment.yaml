@@ -17,7 +17,7 @@ spec:
           image: rallycoding/multi-worker
           resources:
             limits:
-              memory: "128Mi"
+              memory: "512Mi"
               cpu: "1"
           env:
             - name: REDIS_HOST
