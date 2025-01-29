@@ -2,7 +2,7 @@ Here is basic example of custom cluster creation based on VMs
 
 ## On local machine I have created 3 VMs based on Ubuntu Server (ARM arch):
 ```
-- k8s_master        <- 10.211.55.6
+- k8s_master        <- 10.211.55.10
 - k8s_worker_0      <- 10.211.55.8
 - k8s_worker_1      <- 10.211.55.9
 ```
@@ -62,7 +62,7 @@ sudo kubeadm init
 > ![kubeadm_error](https://krzysztofbrzozowski.com/media/2025/01/28/error_kubeadm_init.png)
 
 ## What I did?
-Uppdated containerd to new version
+Updated containerd to new version
 ```
 wget https://github.com/containerd/containerd/releases/download/v2.0.2/containerd-2.0.2-linux-arm64.tar.gz
 sudo tar Cxzvf /usr/local containerd-2.0.2-linux-arm64.tar.gz
@@ -70,15 +70,20 @@ sudo reboot
 containerd --version
 ```
 
-![TIP]
-Still the same issue <- I am suspecting previous containerd config is not updated one
-```
-cat /etc/containerd/config.toml
+> [!ERROR]
+> Looks like this solution is not working out of the box on top of containerd 1.75
 
-...
-disabled_plugins = ["cri"] 
-...
+> ![TIP]
+> Use conatinerd intalled during docker installationa do the following
+> ```
+> cat /etc/containerd/config.toml
+> 
+> ...
+> disabled_plugins = ["cri"] 
+> ...
+> 
+> remove that and
+> sudo systemctl restart containerd
+> ```
+> After that it is possible to initialize node on master
 
-remove that and
-sudo systemctl restart containerd
-```
