@@ -70,10 +70,10 @@ sudo reboot
 containerd --version
 ```
 
-> [!ERROR]
+> [!CAUTION]
 > Looks like this solution is not working out of the box on top of containerd 1.75
 
-> ![TIP]
+> [!TIP]
 > Use conatinerd intalled during docker installationa do the following
 > ```
 > cat /etc/containerd/config.toml
