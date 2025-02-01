@@ -2,9 +2,9 @@ Here is basic example of custom cluster creation based on VMs
 
 ## On local machine I have created 3 VMs based on Ubuntu Server (ARM arch):
 ```
-- k8s_master        <- 10.211.55.10
-- k8s_worker_0      <- 10.211.55.8
-- k8s_worker_1      <- 10.211.55.9
+- k8s_master        <- 192.168.232.131
+- k8s_node_0        <- 192.168.232.132
+- k8s_node_1        <- 192.168.232.133
 ```
 
 Set up process
@@ -86,4 +86,13 @@ containerd --version
 > sudo systemctl restart containerd
 > ```
 > After that it is possible to initialize node on master
+
+# Run cluster automatically using script
+```
+./run_k8s_vms.sh --start
+
+or
+
+./run_k8s_vms.sh --stop
+```
 
