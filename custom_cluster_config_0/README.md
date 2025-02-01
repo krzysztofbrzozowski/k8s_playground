@@ -7,6 +7,14 @@ Here is basic example of custom cluster creation based on VMs
 - k8s_node_1        <- 192.168.232.133
 ```
 
+> [!TIP]
+> Since I am running VMs using vamware fusion for mac I observed issue
+> that during typing sudo, system is very slow
+> ```
+> echo -e '127.0.0.1\t' $(hostnamectl | grep -i "static hostname:" | cut -f2- -d:) | sudo tee -a /etc/hosts
+> ```
+> solved the issie
+
 Set up process
 ### Disable swap
 ```
