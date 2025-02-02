@@ -87,24 +87,32 @@ EOF'
 sudo sysctl --system
 ```
 
-### Install kubelet kubeadm kubectl
+## Configure containerd
 ```
-sudo apt-get update
-# apt-transport-https may be a dummy package; if so, you can skip that package
-sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+sudo containerd config default | sudo tee /etc/containerd/config.toml > /dev/null 2>&1 
+cat /etc/containerd/config.toml
+```
 
-# If the directory `/etc/apt/keyrings` does not exist, it should be created before the curl command, read the note below.
-# sudo mkdir -p -m 755 /etc/apt/keyrings
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+Change "SystemdCgroup" to true
+...
+ShimGroup = ""
+SystemCgroup = true
+...
 
-# This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+Restart and verify the containerd status
+```
+sudo systemctl status containerd
+sudo systemctl restart containerd
+```
 
+### Install k8s kubelet kubeadm kubectl (1.32)
+```
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/k8s.gpg
+sudo chmod 644 /etc/apt/keyrings/k8s.gpg # allow unprivileged APT programs to read this keyring
+echo 'deb [signed-by=/etc/apt/keyrings/k8s.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/k8s.list
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
-
-sudo systemctl enable --now kubelet
 ```
 
 ### Init the cluster
