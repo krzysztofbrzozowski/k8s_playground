@@ -213,7 +213,63 @@ kube-system   kube-proxy-cnsm2                    1/1     Running   0          2
 kube-system   kube-proxy-nthqx                    1/1     Running   0          17m
 kube-system   kube-scheduler-k8smaster            1/1     Running   0          17m
 ```
+
 That means CNI is not implemented
+
+### Install Helm
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+which helm
+```
+
+### Install Cilium and veridy
+```
+helm repo add cilium https://helm.cilium.io/
+```
+```
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+```
+
+```
+user@k8smaster:~$ cilium status
+    /¯¯\
+ /¯¯\__/¯¯\    Cilium:             1 errors
+ \__/¯¯\__/    Operator:           disabled
+ /¯¯\__/¯¯\    Envoy DaemonSet:    disabled (using embedded mode)
+ \__/¯¯\__/    Hubble Relay:       disabled
+    \__/       ClusterMesh:        disabled
+
+Containers:            cilium             
+                       cilium-operator    
+Cluster Pods:          0/2 managed by Cilium
+Helm chart version:    
+Errors:                cilium    cilium    daemonsets.apps "cilium" not found
+status check failed: [daemonsets.apps "cilium" not found, unable to retrieve ConfigMap "cilium-config": configmaps "cilium-config" not found]
+```
+
+### Install Cilium
+```
+helm install cilium cilium/cilium --version 1.16.6 \
+  --namespace kube-system
+```
+
+### 4th verify
+```
+user@k8smaster:~$ kubectl get nodes
+NAME        STATUS   ROLES           AGE   VERSION
+k8smaster   Ready    control-plane   30m   v1.32.1
+k8snode0    Ready    <none>          15m   v1.32.1
+k8snode1    Ready    <none>          15m   v1.32.1
+```
 
 !Depreciated
 > [!WARNING]
