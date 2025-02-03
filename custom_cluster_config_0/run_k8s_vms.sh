@@ -5,7 +5,7 @@ VM_LOCATION="$HOME/VMs"
 VM_NAMES=("k8s_master.vmwarevm" "k8s_node_0.vmwarevm" "k8s_node_1.vmwarevm")
 
 # Corresponding IP addresses for the VMs
-VM_IPS=("192.168.232.131" "192.168.232.132" "192.168.232.133")
+VM_IPS=("192.168.232.140" "192.168.232.141" "192.168.232.142")
 
 # Function to check if a VM exists
 check_vm_exists() {

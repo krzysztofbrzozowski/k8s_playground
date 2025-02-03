@@ -2,9 +2,9 @@ Here is basic example of custom cluster creation based on VMs
 
 ## On local machine I have created 3 VMs based on Ubuntu Server (ARM arch):
 ```
-- k8s_master        <- 192.168.232.131
-- k8s_node_0        <- 192.168.232.132
-- k8s_node_1        <- 192.168.232.133
+- k8s_master        <- 192.168.232.140
+- k8s_node_0        <- 192.168.232.141
+- k8s_node_1        <- 192.168.232.142
 ```
 
 > [!TIP]
@@ -115,11 +115,107 @@ sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 ```
 
-### Init the cluster
+### Create copies of master node
+> [!TIP] IP Adressses in vmware fusion is not cleaniest solution and can be assinged randomly
+> To solve that add one additional line in /etc/netplan/50-cloud-init.yaml
+> ![fix-dxcp-lease](https://krzysztofbrzozowski.com/media/2025/02/03/screenshot-2025-02-03-at-230344.png)
+> ```
+> dhcp-identifier: mac
+Copy installed and configured VM (If you are using vamware). Rename only hostname
 ```
-sudo kubeadm init
+sudo hostnamectl set-hostname k8snodex
 ```
 
+In vmware fix entry 127.0.0.1 actually point to correct hostname
+```
+change entry in /etc/hosts
+```
+
+### Init the cluster
+```
+sudo kubeadm init --pod-network-cidr 192.168.232.0/24 --control-plane-endpoint "192.168.232.140:6443" --upload-certs -v=5
+```
+
+> [!CAUTION]
+> Never provide ceritificates, even SHA1 of it
+
+Output:
+```
+...
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of control-plane nodes running the following command on each as root:
+
+  kubeadm join 192.168.232.140:6443 --token yfmdjc.xyz \
+        --discovery-token-ca-cert-hash sha256:xyz \
+        --control-plane --certificate-key xyz
+
+Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
+As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
+"kubeadm init phase upload-certs --upload-certs" to reload certs afterward.
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.232.140:6443 --token yfmdjc.xyz \
+        --discovery-token-ca-cert-hash sha256:xyz 
+```
+
+### Apply kubeconfig
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+## Verification
+### 1st verification
+```
+user@k8smaster:~$ kubectl get nodes
+NAME        STATUS     ROLES           AGE   VERSION
+k8smaster   NotReady   control-plane   11m   v1.32.1
+```
+
+### 2nd verification after connecting to control-node -> kubeadm join 192.168.232.140:6443...
+```
+user@k8smaster:~$ kubectl get nodes
+NAME        STATUS     ROLES           AGE   VERSION
+k8smaster   NotReady   control-plane   15m   v1.32.1
+k8snode0    NotReady   <none>          39s   v1.32.1
+k8snode1    NotReady   <none>          25s   v1.32.1
+```
+
+### 3rd verification
+```
+user@k8smaster:~$ kubectl get pods -A
+NAMESPACE     NAME                                READY   STATUS    RESTARTS   AGE
+kube-system   coredns-668d6bf9bc-h825s            0/1     Pending   0          17m
+kube-system   coredns-668d6bf9bc-t2sdl            0/1     Pending   0          17m
+kube-system   etcd-k8smaster                      1/1     Running   0          17m
+kube-system   kube-apiserver-k8smaster            1/1     Running   0          17m
+kube-system   kube-controller-manager-k8smaster   1/1     Running   0          17m
+kube-system   kube-proxy-5rb54                    1/1     Running   0          2m34s
+kube-system   kube-proxy-cnsm2                    1/1     Running   0          2m48s
+kube-system   kube-proxy-nthqx                    1/1     Running   0          17m
+kube-system   kube-scheduler-k8smaster            1/1     Running   0          17m
+```
+That means CNI is not implemented
+
+!Depreciated
 > [!WARNING]
 > Of course it is not working out of the box
 > ![kubeadm_error](https://krzysztofbrzozowski.com/media/2025/01/28/error_kubeadm_init.png)
