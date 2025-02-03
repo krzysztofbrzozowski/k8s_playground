@@ -3,6 +3,7 @@
 - [sample_config_0](#↪-sample_config_0) <- some very very basic config
 - [sample_config_1](#↪-sample_config_1) <- config contains Deployment object
 - [sample_config_2](#↪-sample_config_2) <- config contains full app with ClousterIP and Deployments
+- [Custom Cluster Config README](custom_cluster_config_0/README.md) <- Run k8s cluster on VMs usink kubeadm
 
 
 ## To run locally the k8s
