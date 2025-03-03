@@ -13,7 +13,7 @@ Here is basic example of custom cluster creation based on VMs
 > ```
 > echo -e '127.0.0.1\t' $(hostnamectl | grep -i "static hostname:" | cut -f2- -d:) | sudo tee -a /etc/hosts
 > ```
-> solved the issie
+> solved the issue
 
 ### Install few supporting packages
 ```
@@ -96,7 +96,7 @@ cat /etc/containerd/config.toml
 Change "SystemdCgroup" to true
 ...
 ShimGroup = ""
-SystemCgroup = true
+SystemdCgroup = true
 ...
 
 Restart and verify the containerd status
@@ -121,6 +121,26 @@ sudo apt-mark hold kubelet kubeadm kubectl
 > ![fix-dxcp-lease](https://krzysztofbrzozowski.com/media/2025/02/03/screenshot-2025-02-03-at-230344.png)
 > ```
 > dhcp-identifier: mac
+
+> [!TIP] For proxmox config and network devices you can use static IP assining
+> Edit the file
+> ```bash
+> nvim /etc/netplan/50-cloud-init.yaml
+> ```
+> ```bash
+> network:
+>   version: 2
+>   ethernets:
+>     ens18:
+>       addresses:
+>         - 192.168.1.200/24
+>       nameservers:
+>         addresses:
+>           - 192.168.1.1
+>       routes:
+>         - to: default
+>           via: 192.168.1.1
+
 Copy installed and configured VM (If you are using vamware). Rename only hostname
 ```
 sudo hostnamectl set-hostname k8snodex
