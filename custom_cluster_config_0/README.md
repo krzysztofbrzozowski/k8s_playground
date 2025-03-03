@@ -146,6 +146,12 @@ Copy installed and configured VM (If you are using vamware). Rename only hostnam
 sudo hostnamectl set-hostname k8snodex
 ```
 
+Change the isps ->
+```
+sudo nvim /etc/netplan/50-cloud-init.yaml
+sudo netplan apply
+```
+
 In vmware fix entry 127.0.0.1 actually point to correct hostname
 ```
 change entry in /etc/hosts
@@ -154,6 +160,7 @@ change entry in /etc/hosts
 ### Init the cluster
 ```
 sudo kubeadm init --pod-network-cidr 192.168.232.0/24 --control-plane-endpoint "192.168.232.140:6443" --upload-certs -v=5
+sudo kubeadm init --pod-network-cidr 192.168.1.0/24 --control-plane-endpoint "192.168.1.201:6443" --upload-certs -v=5
 ```
 
 > [!CAUTION]
@@ -245,7 +252,7 @@ chmod 700 get_helm.sh
 which helm
 ```
 
-### Install Cilium and veridy
+### Install Cilium and veridy (only on master node)
 ```
 helm repo add cilium https://helm.cilium.io/
 ```
@@ -311,8 +318,7 @@ containerd --version
 > [!TIP]
 > Use conatinerd intalled during docker installationa do the following
 > ```
-> cat /etc/containerd/config.toml
-> 
+> sudo systemctl restart containerd
 > ...
 > disabled_plugins = ["cri"] 
 > ...
